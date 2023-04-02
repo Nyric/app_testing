@@ -144,6 +144,27 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
                           ),
                         ),
                       ),
+                      Positioned(
+                        left: 16,
+                        top: 16,
+                        child: IconButton(
+                          onPressed: () {
+                            _cardController.triggerLeft();
+                          },
+                          icon: Icon(Icons.close, size: 32, color: Colors.red),
+                        ),
+                      ),
+                      Positioned(
+                        right: 16,
+                        top: 16,
+                        child: IconButton(
+                          onPressed: () {
+                            _cardController.triggerRight();
+                          },
+                          icon: Icon(Icons.favorite,
+                              size: 32, color: Colors.green),
+                        ),
+                      ),
                     ],
                   ),
                 ),
