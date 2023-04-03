@@ -52,7 +52,14 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tinder Clone'),
+        title: Center(
+          child: Image.network(
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/TinderLogo-2017.svg/512px-TinderLogo-2017.svg.png?20181003233135', // Replace with the URL of your image
+            width: 100, // You can set the width and height as needed
+            height: 30,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
       body: _selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -121,7 +128,40 @@ class _HomeTabState extends State<HomeTab> {
         'https://www.thepinknews.com/wp-content/uploads/2021/12/euphoria.jpg',
       ],
     ),
+    Profile(
+      name: 'Emile',
+      age: 29,
+      bio:
+          'Killing Squidfaced fuckers is my thing, If you ask about the scar your blocked. You should see me with the suit off ;)',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/9/9a/EmileWaypoint.jpg/300px-EmileWaypoint.jpg',
+        'https://static.wikia.nocookie.net/halo/images/2/2a/Grenadier_%28Noble_Team%29.jpg/revision/latest?cb=20091215082518',
+        'https://static.wikia.nocookie.net/halo/images/6/65/Reach_947096_Medium.jpg/revision/latest?cb=20100919084603',
+      ],
+    ),
+    Profile(
+      name: 'Jorge',
+      age: 41,
+      bio:
+          'Im a big softy, colony raised, nukes covanant flagships on weekends',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/1/1c/Official_-_Jorge.jpg/300px-Official_-_Jorge.jpg',
+        'https://static.wikia.nocookie.net/halo/images/7/7f/Jorge3.jpg/revision/latest/scale-to-width-down/1000?cb=20100817123631',
+        'https://static.wikia.nocookie.net/halo/images/8/87/Reach_16065337_Medium.jpg/revision/latest?cb=20110428042218',
+      ],
+    ),
+    Profile(
+      name: 'Kat',
+      age: 22,
+      bio: 'Passanger Princess, UNSC proud, watch your head.',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/5/50/Kat.PNG/300px-Kat.PNG',
+        'https://halo.wiki.gallery/images/thumb/6/69/Noble_2.jpg/1600px-Noble_2.jpg',
+        'https://static.wikia.nocookie.net/halo/images/6/60/Kat_Death.jpg/revision/latest?cb=20131107010403',
+      ],
+    ), // Add your profiles here...
   ];
+
   final CardController _cardController = CardController();
 
   @override
@@ -251,37 +291,190 @@ class Message {
   final String sender;
   final String content;
   final DateTime timestamp;
+  final String profileImageUrl;
+  final bool isFromUser;
 
   Message(
-      {required this.sender, required this.content, required this.timestamp});
+      {required this.sender,
+      required this.content,
+      required this.timestamp,
+      this.profileImageUrl = '',
+      this.isFromUser = false});
 }
 
 class MessagesInboxTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Message> messages = [
-      Message(
-          sender: 'Alice',
-          content: 'Hey there!',
-          timestamp: DateTime.now().subtract(Duration(minutes: 1))),
-      Message(
-          sender: 'Bob',
-          content: 'What\'s up?',
-          timestamp: DateTime.now().subtract(Duration(hours: 1))),
-      // Add more messages here...
+    List<Conversation> conversations = [
+      Conversation(
+        sender: Message(
+            sender: 'Ash Kaash',
+            content: 'Looking for a throat goat ;)',
+            timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+            profileImageUrl:
+                'https://pbs.twimg.com/media/FsF9phXXoAARB49?format=jpg&name=large'),
+        messages: [
+          Message(
+              sender: 'Ash Kaash',
+              content: 'Looking for a throat goat ;)',
+              timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+              profileImageUrl:
+                  'https://pbs.twimg.com/media/FsF9phXXoAARB49?format=jpg&name=large'),
+          Message(
+              sender: 'You',
+              content: 'Ash Kaash 0_0',
+              timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+              profileImageUrl:
+                  'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
+              isFromUser: true),
+        ],
+      ),
+      // Add more conversations here...
     ];
 
     return ListView.builder(
-      itemCount: messages.length,
+      itemCount: conversations.length,
       itemBuilder: (BuildContext context, int index) {
-        Message message = messages[index];
+        Conversation conversation = conversations[index];
         return ListTile(
-          leading: CircleAvatar(child: Text(message.sender[0])),
-          title: Text(message.sender),
-          subtitle: Text(message.content),
-          trailing: Text(DateFormat('hh:mm a').format(message.timestamp)),
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(conversation.sender.profileImageUrl),
+          ),
+          title: Text(conversation.sender.sender),
+          subtitle: Text(conversation.sender.content),
+          trailing:
+              Text(DateFormat('hh:mm a').format(conversation.sender.timestamp)),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(conversation: conversation),
+              ),
+            );
+          },
         );
       },
+    );
+  }
+}
+
+class Conversation {
+  final Message sender;
+  final List<Message> messages;
+
+  Conversation({required this.sender, required this.messages});
+}
+
+class ChatPage extends StatefulWidget {
+  final Conversation conversation;
+
+  ChatPage({required this.conversation});
+
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  TextEditingController _messageController = TextEditingController();
+
+  void _sendMessage() {
+    if (_messageController.text.trim().isNotEmpty) {
+      setState(() {
+        widget.conversation.messages.add(
+          Message(
+            sender: 'You',
+            content: _messageController.text.trim(),
+            timestamp: DateTime.now(),
+            profileImageUrl:
+                'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
+            isFromUser: true,
+          ),
+        );
+      });
+
+      _messageController.clear();
+    }
+  }
+
+  Widget _buildMessageBubble(Message message, bool isFromUser) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: isFromUser ? Colors.blueAccent : Colors.grey[300],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+          bottomLeft: isFromUser ? Radius.circular(16) : Radius.circular(0),
+          bottomRight: isFromUser ? Radius.circular(0) : Radius.circular(16),
+        ),
+      ),
+      child: Text(
+        message.content,
+        style: TextStyle(
+          color: isFromUser ? Colors.white : Colors.black,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.conversation.sender.sender}'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.conversation.messages.length,
+              itemBuilder: (context, index) {
+                Message message = widget.conversation.messages[index];
+                bool isFromUser = message.isFromUser;
+
+                return Row(
+                  mainAxisAlignment: isFromUser
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    if (!isFromUser) ...[
+                      CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(message.profileImageUrl)),
+                      SizedBox(width: 8),
+                    ],
+                    _buildMessageBubble(message, isFromUser),
+                  ],
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: _sendMessage,
+                  icon: Icon(Icons.send),
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
