@@ -56,7 +56,7 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
           child: Image.network(
             'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/TinderLogo-2017.svg/512px-TinderLogo-2017.svg.png?20181003233135', // Replace with the URL of your image
             width: 213, // You can set the width and height as needed
-            height: 45,
+            height: 48,
             fit: BoxFit.fill,
           ),
         ),
