@@ -251,37 +251,190 @@ class Message {
   final String sender;
   final String content;
   final DateTime timestamp;
+  final String profileImageUrl;
+  final bool isFromUser;
 
   Message(
-      {required this.sender, required this.content, required this.timestamp});
+      {required this.sender,
+      required this.content,
+      required this.timestamp,
+      this.profileImageUrl = '',
+      this.isFromUser = false});
 }
 
 class MessagesInboxTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Message> messages = [
-      Message(
-          sender: 'Alice',
-          content: 'Hey there!',
-          timestamp: DateTime.now().subtract(Duration(minutes: 1))),
-      Message(
-          sender: 'Bob',
-          content: 'What\'s up?',
-          timestamp: DateTime.now().subtract(Duration(hours: 1))),
-      // Add more messages here...
+    List<Conversation> conversations = [
+      Conversation(
+        sender: Message(
+            sender: 'Alice',
+            content: 'Hey there!',
+            timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+            profileImageUrl:
+                'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80'),
+        messages: [
+          Message(
+              sender: 'Alice',
+              content: 'Hey there!',
+              timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+              profileImageUrl:
+                  'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80'),
+          Message(
+              sender: 'You',
+              content: 'Hi, Alice!',
+              timestamp: DateTime.now().subtract(Duration(minutes: 1)),
+              profileImageUrl:
+                  'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
+              isFromUser: true),
+        ],
+      ),
+      // Add more conversations here...
     ];
 
     return ListView.builder(
-      itemCount: messages.length,
+      itemCount: conversations.length,
       itemBuilder: (BuildContext context, int index) {
-        Message message = messages[index];
+        Conversation conversation = conversations[index];
         return ListTile(
-          leading: CircleAvatar(child: Text(message.sender[0])),
-          title: Text(message.sender),
-          subtitle: Text(message.content),
-          trailing: Text(DateFormat('hh:mm a').format(message.timestamp)),
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(conversation.sender.profileImageUrl),
+          ),
+          title: Text(conversation.sender.sender),
+          subtitle: Text(conversation.sender.content),
+          trailing:
+              Text(DateFormat('hh:mm a').format(conversation.sender.timestamp)),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(conversation: conversation),
+              ),
+            );
+          },
         );
       },
+    );
+  }
+}
+
+class Conversation {
+  final Message sender;
+  final List<Message> messages;
+
+  Conversation({required this.sender, required this.messages});
+}
+
+class ChatPage extends StatefulWidget {
+  final Conversation conversation;
+
+  ChatPage({required this.conversation});
+
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  TextEditingController _messageController = TextEditingController();
+
+  void _sendMessage() {
+    if (_messageController.text.trim().isNotEmpty) {
+      setState(() {
+        widget.conversation.messages.add(
+          Message(
+            sender: 'You',
+            content: _messageController.text.trim(),
+            timestamp: DateTime.now(),
+            profileImageUrl:
+                'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
+            isFromUser: true,
+          ),
+        );
+      });
+
+      _messageController.clear();
+    }
+  }
+
+  Widget _buildMessageBubble(Message message, bool isFromUser) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: isFromUser ? Colors.blueAccent : Colors.grey[300],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+          bottomLeft: isFromUser ? Radius.circular(16) : Radius.circular(0),
+          bottomRight: isFromUser ? Radius.circular(0) : Radius.circular(16),
+        ),
+      ),
+      child: Text(
+        message.content,
+        style: TextStyle(
+          color: isFromUser ? Colors.white : Colors.black,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.conversation.sender.sender}'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.conversation.messages.length,
+              itemBuilder: (context, index) {
+                Message message = widget.conversation.messages[index];
+                bool isFromUser = message.isFromUser;
+
+                return Row(
+                  mainAxisAlignment: isFromUser
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    if (!isFromUser) ...[
+                      CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(message.profileImageUrl)),
+                      SizedBox(width: 8),
+                    ],
+                    _buildMessageBubble(message, isFromUser),
+                  ],
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: _sendMessage,
+                  icon: Icon(Icons.send),
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
