@@ -221,13 +221,66 @@ class _TinderTabState extends State<TinderTab> {
   }
 }
 
-class UserProfileTab extends StatelessWidget {
+class UserProfileTab extends StatefulWidget {
+  @override
+  _UserProfileTabState createState() => _UserProfileTabState();
+}
+
+class _UserProfileTabState extends State<UserProfileTab> {
+  // Example user profile
+  Profile userProfile = Profile(
+    name: 'User',
+    age: 25,
+    bio: 'I love coding and working on exciting projects!',
+    images: [
+      'https://example.com/image1.jpg',
+      'https://example.com/image2.jpg',
+      'https://example.com/image3.jpg',
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'User Profile',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CarouselSlider.builder(
+            itemCount: userProfile.images.length,
+            itemBuilder: (BuildContext context, int index, int realIndex) {
+              return CachedNetworkImage(
+                imageUrl: userProfile.images[index],
+                fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              );
+            },
+            options: CarouselOptions(
+              height: MediaQuery.of(context).size.height * 0.5,
+              viewportFraction: 1.0,
+              enlargeCenterPage: false,
+              autoPlay: false,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${userProfile.name}, ${userProfile.age}',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(userProfile.bio),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
