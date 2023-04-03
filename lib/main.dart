@@ -40,6 +40,51 @@ class TinderCloneHomePage extends StatefulWidget {
 }
 
 class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
+  int _selectedIndex = 0;
+
+  List<Widget> _tabs = [
+    TinderTab(),
+    UserProfileTab(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tinder Clone'),
+      ),
+      body: _tabs[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.red,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class TinderTab extends StatefulWidget {
+  @override
+  _TinderTabState createState() => _TinderTabState();
+}
+
+class _TinderTabState extends State<TinderTab> {
   List<Profile> profiles = [
     Profile(
       name: 'Emile',
@@ -78,107 +123,111 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Tinder Clone'),
-      ),
-      body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.6,
-          child: TinderSwapCard(
-            orientation: AmassOrientation.BOTTOM,
-            totalNum: profiles.length,
-            stackNum: 3,
-            maxWidth: MediaQuery.of(context).size.width * 0.9,
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
-            minWidth: MediaQuery.of(context).size.width * 0.8,
-            minHeight: MediaQuery.of(context).size.height * 0.5,
-            cardController: _cardController,
-            cardBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProfilePage(profile: profiles[index]),
-                    ),
-                  );
-                },
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+    return Center(
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: TinderSwapCard(
+          orientation: AmassOrientation.BOTTOM,
+          totalNum: profiles.length,
+          stackNum: 3,
+          maxWidth: MediaQuery.of(context).size.width * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+          minWidth: MediaQuery.of(context).size.width * 0.8,
+          minHeight: MediaQuery.of(context).size.height * 0.5,
+          cardController: _cardController,
+          cardBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(profile: profiles[index]),
                   ),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: CachedNetworkImage(
-                          imageUrl: profiles[index].images[0],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
-                      ),
-                      Positioned(
-                        left: 16,
-                        bottom: 16,
-                        child: Text(
-                          '${profiles[index].name}, ${profiles[index].age}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 6.0,
-                                color: Colors.black,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 16,
-                        top: 16,
-                        child: IconButton(
-                          onPressed: () {
-                            _cardController.triggerLeft();
-                          },
-                          icon: Icon(Icons.close, size: 32, color: Colors.red),
-                        ),
-                      ),
-                      Positioned(
-                        right: 16,
-                        top: 16,
-                        child: IconButton(
-                          onPressed: () {
-                            _cardController.triggerRight();
-                          },
-                          icon: Icon(Icons.favorite,
-                              size: 32, color: Colors.green),
-                        ),
-                      ),
-                    ],
-                  ),
+                );
+              },
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              );
-            },
-            swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
-              // Get swiping direction
-            },
-            swipeCompleteCallback:
-                (CardSwipeOrientation orientation, int index) {
-              // Get orientation & index on swipe
-            },
-          ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl: profiles[index].images[0],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
+                    ),
+                    Positioned(
+                      left: 16,
+                      bottom: 16,
+                      child: Text(
+                        '${profiles[index].name}, ${profiles[index].age}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 6.0,
+                              color: Colors.black,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 16,
+                      top: 16,
+                      child: IconButton(
+                        onPressed: () {
+                          _cardController.triggerLeft();
+                        },
+                        icon: Icon(Icons.close, size: 32, color: Colors.red),
+                      ),
+                    ),
+                    Positioned(
+                      right: 16,
+                      top: 16,
+                      child: IconButton(
+                        onPressed: () {
+                          _cardController.triggerRight();
+                        },
+                        icon:
+                            Icon(Icons.favorite, size: 32, color: Colors.green),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
+            // Get swiping direction
+          },
+          swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
+            // Get orientation & index on swipe
+          },
         ),
+      ),
+    );
+  }
+}
+
+class UserProfileTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'User Profile',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
