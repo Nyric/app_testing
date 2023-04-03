@@ -52,7 +52,14 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tinder Clone'),
+        title: Center(
+          child: Image.network(
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/TinderLogo-2017.svg/512px-TinderLogo-2017.svg.png?20181003233135', // Replace with the URL of your image
+            width: 100, // You can set the width and height as needed
+            height: 30,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
       body: _selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -121,7 +128,40 @@ class _HomeTabState extends State<HomeTab> {
         'https://www.thepinknews.com/wp-content/uploads/2021/12/euphoria.jpg',
       ],
     ),
+    Profile(
+      name: 'Emile',
+      age: 29,
+      bio:
+          'Killing Squidfaced fuckers is my thing, If you ask about the scar your blocked. You should see me with the suit off ;)',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/9/9a/EmileWaypoint.jpg/300px-EmileWaypoint.jpg',
+        'https://static.wikia.nocookie.net/halo/images/2/2a/Grenadier_%28Noble_Team%29.jpg/revision/latest?cb=20091215082518',
+        'https://static.wikia.nocookie.net/halo/images/6/65/Reach_947096_Medium.jpg/revision/latest?cb=20100919084603',
+      ],
+    ),
+    Profile(
+      name: 'Jorge',
+      age: 41,
+      bio:
+          'Im a big softy, colony raised, nukes covanant flagships on weekends',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/1/1c/Official_-_Jorge.jpg/300px-Official_-_Jorge.jpg',
+        'https://static.wikia.nocookie.net/halo/images/7/7f/Jorge3.jpg/revision/latest/scale-to-width-down/1000?cb=20100817123631',
+        'https://static.wikia.nocookie.net/halo/images/8/87/Reach_16065337_Medium.jpg/revision/latest?cb=20110428042218',
+      ],
+    ),
+    Profile(
+      name: 'Kat',
+      age: 22,
+      bio: 'Passanger Princess, UNSC proud, watch your head.',
+      images: [
+        'https://halo.wiki.gallery/images/thumb/5/50/Kat.PNG/300px-Kat.PNG',
+        'https://halo.wiki.gallery/images/thumb/6/69/Noble_2.jpg/1600px-Noble_2.jpg',
+        'https://static.wikia.nocookie.net/halo/images/6/60/Kat_Death.jpg/revision/latest?cb=20131107010403',
+      ],
+    ), // Add your profiles here...
   ];
+
   final CardController _cardController = CardController();
 
   @override
@@ -268,21 +308,21 @@ class MessagesInboxTab extends StatelessWidget {
     List<Conversation> conversations = [
       Conversation(
         sender: Message(
-            sender: 'Alice',
-            content: 'Hey there!',
+            sender: 'Ash Kaash',
+            content: 'Looking for a throat goat ;)',
             timestamp: DateTime.now().subtract(Duration(minutes: 1)),
             profileImageUrl:
-                'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80'),
+                'https://pbs.twimg.com/media/FsF9phXXoAARB49?format=jpg&name=large'),
         messages: [
           Message(
-              sender: 'Alice',
-              content: 'Hey there!',
+              sender: 'Ash Kaash',
+              content: 'Looking for a throat goat ;)',
               timestamp: DateTime.now().subtract(Duration(minutes: 1)),
               profileImageUrl:
-                  'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80'),
+                  'https://pbs.twimg.com/media/FsF9phXXoAARB49?format=jpg&name=large'),
           Message(
               sender: 'You',
-              content: 'Hi, Alice!',
+              content: 'Ash Kaash 0_0',
               timestamp: DateTime.now().subtract(Duration(minutes: 1)),
               profileImageUrl:
                   'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
