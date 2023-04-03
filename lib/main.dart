@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
@@ -195,7 +196,7 @@ class UserProfileTab extends StatelessWidget {
     Profile currentUserProfile = Profile(
       name: 'Lonely Dog',
       age: 25,
-      bio: 'I need to free my mind at night...',
+      bio: 'The lonely stoner needs to free his mind at night... ',
       images: [
         'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
         'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1017&q=80',
@@ -246,11 +247,41 @@ class UserProfileTab extends StatelessWidget {
   }
 }
 
+class Message {
+  final String sender;
+  final String content;
+  final DateTime timestamp;
+
+  Message(
+      {required this.sender, required this.content, required this.timestamp});
+}
+
 class MessagesInboxTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Messages Inbox'),
+    List<Message> messages = [
+      Message(
+          sender: 'Alice',
+          content: 'Hey there!',
+          timestamp: DateTime.now().subtract(Duration(minutes: 1))),
+      Message(
+          sender: 'Bob',
+          content: 'What\'s up?',
+          timestamp: DateTime.now().subtract(Duration(hours: 1))),
+      // Add more messages here...
+    ];
+
+    return ListView.builder(
+      itemCount: messages.length,
+      itemBuilder: (BuildContext context, int index) {
+        Message message = messages[index];
+        return ListTile(
+          leading: CircleAvatar(child: Text(message.sender[0])),
+          title: Text(message.sender),
+          subtitle: Text(message.content),
+          trailing: Text(DateFormat('hh:mm a').format(message.timestamp)),
+        );
+      },
     );
   }
 }
@@ -316,3 +347,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+//Break
