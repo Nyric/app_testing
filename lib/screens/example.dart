@@ -40,18 +40,12 @@ class TinderCloneHomePage extends StatefulWidget {
 }
 
 class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
-  int _selectedIndex = 0;
-
-  List<Widget> _tabs = [
-    TinderTab(),
+  int _currentIndex = 0;
+  final List<Widget> _selectedPage = [
+    HomeTab(),
     UserProfileTab(),
+    MessagesInboxTab(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +53,15 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
       appBar: AppBar(
         title: Text('Tinder Clone'),
       ),
-      body: _tabs[_selectedIndex],
+      body: _selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        currentIndex: _currentIndex,
+        onTap: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -70,23 +70,56 @@ class _TinderCloneHomePageState extends State<TinderCloneHomePage> {
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Messages',
+          ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.red,
-        onTap: _onItemTapped,
       ),
     );
   }
 }
 
-class TinderTab extends StatefulWidget {
+class HomeTab extends StatefulWidget {
   @override
-  _TinderTabState createState() => _TinderTabState();
+  _HomeTabState createState() => _HomeTabState();
 }
 
-class _TinderTabState extends State<TinderTab> {
+class _HomeTabState extends State<HomeTab> {
   List<Profile> profiles = [
-    // Add your profiles here...
+    Profile(
+      name: 'Donald Trump',
+      age: 71,
+      bio:
+          'Long walks in Mira Lago but short walks to the prison shower ;) Soap Dropper in Chief  ',
+      images: [
+        'https://images.unsplash.com/photo-1580128660010-fd027e1e587a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80',
+        'https://images.unsplash.com/photo-1569285645462-a3f9c6332d56?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        'https://images.unsplash.com/photo-1604595704321-f24afaa2fa6e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+      ],
+    ),
+    Profile(
+      name: 'Patrick Bateman',
+      age: 29,
+      bio:
+          'Let me put your head in my fridge... I mean lets go to Dorsias :) Stocker by day Stalker by night.',
+      images: [
+        'https://images.english.elpais.com/resizer/9WQlDVqVV-wdwqRAvrRv8z3KqTM=/1200x0/cloudfront-eu-central-1.images.arcpublishing.com/prisa/PYUQSPU2HRDB7PFG7BEEZ232VE.jpg',
+        'https://industrialscripts.com/wp-content/uploads/2022/11/Patrick-Bateman-Original-Character.jpg',
+        'https://www.looper.com/img/gallery/american-psycho-facts-that-would-even-impress-patrick-bateman/intro-1675976433.webp',
+      ],
+    ),
+    Profile(
+      name: 'Rue Bennet',
+      age: 18,
+      bio:
+          'Just got out of rehab so new around here. Fantastic at dodging incoming traffic. ',
+      images: [
+        'https://media1.popsugar-assets.com/files/thumbor/8j44OD7D1pt39gcXfQrzQHgs_VU/fit-in/2048xorig/filters:format_auto-!!-:strip_icc-!!-/2022/02/07/884/n/45101125/tmp_3JMu4A_8bbc52d0242a631d_zendaya_1_1_.jpg',
+        'https://ca-times.brightspotcdn.com/dims4/default/3ab383e/2147483647/strip/true/crop/1920x1280+0+0/resize/1200x800!/format/webp/quality/80/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fee%2F76%2F9d60b74e48f290613602ee0f3375%2Fzendaya.jpg',
+        'https://www.thepinknews.com/wp-content/uploads/2021/12/euphoria.jpg',
+      ],
+    ),
   ];
   final CardController _cardController = CardController();
 
@@ -134,43 +167,15 @@ class _TinderTabState extends State<TinderTab> {
                       ),
                     ),
                     Positioned(
-                      left: 16,
                       bottom: 16,
+                      left: 16,
                       child: Text(
                         '${profiles[index].name}, ${profiles[index].age}',
                         style: TextStyle(
-                          color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 6.0,
-                              color: Colors.black,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
+                          color: Colors.white,
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 16,
-                      top: 16,
-                      child: IconButton(
-                        onPressed: () {
-                          _cardController.triggerLeft();
-                        },
-                        icon: Icon(Icons.close, size: 32, color: Colors.red),
-                      ),
-                    ),
-                    Positioned(
-                      right: 16,
-                      top: 16,
-                      child: IconButton(
-                        onPressed: () {
-                          _cardController.triggerRight();
-                        },
-                        icon:
-                            Icon(Icons.favorite, size: 32, color: Colors.green),
                       ),
                     ),
                   ],
@@ -178,79 +183,74 @@ class _TinderTabState extends State<TinderTab> {
               ),
             );
           },
-          swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
-            // Get swiping direction
-          },
-          swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
-            // Get orientation & index on swipe
-          },
         ),
       ),
     );
   }
 }
 
-class UserProfileTab extends StatefulWidget {
-  @override
-  _UserProfileTabState createState() => _UserProfileTabState();
-}
-
-class _UserProfileTabState extends State<UserProfileTab> {
-  // Example user profile
-  Profile userProfile = Profile(
-    name: 'User',
-    age: 25,
-    bio: 'I love coding and working on exciting projects!',
-    images: [
-      'https://example.com/image1.jpg',
-      'https://example.com/image2.jpg',
-      'https://example.com/image3.jpg',
-    ],
-  );
-
+class UserProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Profile currentUserProfile = Profile(
+      name: 'Lonely Dog',
+      age: 25,
+      bio: 'I need to free my mind at night...',
+      images: [
+        'https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80',
+        'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1017&q=80',
+        'https://images.unsplash.com/photo-1575425186775-b8de9a427e67?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+      ],
+    );
+
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CarouselSlider.builder(
-            itemCount: userProfile.images.length,
+            itemCount: currentUserProfile.images.length,
             itemBuilder: (BuildContext context, int index, int realIndex) {
               return CachedNetworkImage(
-                imageUrl: userProfile.images[index],
+                imageUrl: currentUserProfile.images[index],
                 fit: BoxFit.cover,
-                width: MediaQuery.of(context).size.width,
+                width: double.infinity,
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               );
             },
             options: CarouselOptions(
-              height: MediaQuery.of(context).size.height * 0.5,
-              viewportFraction: 1.0,
-              enlargeCenterPage: false,
+              height: MediaQuery.of(context).size.height * 0.4,
               autoPlay: false,
+              enlargeCenterPage: false,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${userProfile.name}, ${userProfile.age}',
+                  '${currentUserProfile.name}, ${currentUserProfile.age}',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
-                Text(userProfile.bio),
+                SizedBox(height: 8),
+                Text(currentUserProfile.bio),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class MessagesInboxTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Messages Inbox'),
     );
   }
 }
